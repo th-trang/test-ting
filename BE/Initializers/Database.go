@@ -16,7 +16,7 @@ func ConnectToDB() {
 	var err error
 
 	//Get database url from environment variables (defined in .env file)
-	var dsn string = os.Getenv("DB_URL")
+	var dsn string = os.Getenv("DATABASE_URL")
 
 	//Connect with postgres
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{

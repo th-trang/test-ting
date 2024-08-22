@@ -7,7 +7,7 @@
     - Use Postman to test API 
 
 # What to learn to prep
-    - MVVM (Vodel View Viewmodel)
+    - MVVM (Model View Viewmodel)
     - MVC (Model View Controller)
     - Gin 
     - GORM 

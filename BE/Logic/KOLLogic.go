@@ -1,6 +1,9 @@
 package Logic
 
-import "wan-api-kol-event/DTO"
+import (
+	"wan-api-kol-event/DTO"
+	"wan-api-kol-event/Initializers"
+)
 
 // * Get Kols from the database based on the range of pageIndex and pageSize
 // ! USE GORM TO QUERY THE DATABASE
@@ -9,7 +12,15 @@ import "wan-api-kol-event/DTO"
 // @params: pageIndex
 // @params: pageSize
 // @return: List of KOLs and error message
-func GetKolLogic() ([]*DTO.KolDTO, error) {
+func GetKolLogic(pageIndex int, pageSize int) ([]*DTO.KolDTO, error) {
+	var kols []*DTO.KolDTO
+	offset := (pageIndex - 1) * pageSize
 
-	return nil, nil
+	// Query the database
+	result := Initializers.DB.Limit(pageSize).Offset(offset).Find(&kols).Scan(&kols)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return kols, nil
 }
