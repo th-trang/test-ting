@@ -19,7 +19,7 @@ export default function RootLayout({
       </Head>
       <div className="dark">
         <Providers>
-          <Page />{children}
+          {children}
         </Providers>
       </div>
     </>
