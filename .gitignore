@@ -51,6 +51,8 @@ vendor/
 *.dylib
 *.test
 *.out
+*.env
+docker-compose.yml
 
 # IDEs and editors
 .idea/

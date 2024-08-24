@@ -9,6 +9,11 @@
 		"lint": "next lint"
 	},
 	"dependencies": {
+		"@nextui-org/react": "^2.4.6",
+		"@nextui-org/system": "^2.2.5",
+		"@nextui-org/table": "^2.0.39",
+		"@nextui-org/theme": "^2.2.9",
+		"framer-motion": "^11.3.29",
 		"next": "14.2.3",
 		"react": "^18",
 		"react-dom": "^18",

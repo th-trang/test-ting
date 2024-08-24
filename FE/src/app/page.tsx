@@ -1,29 +1,35 @@
 "use client"
 
 import React, { useEffect, useState } from 'react';
-
+import {
+	Table,
+	TableHeader,
+	TableBody,
+	TableColumn,
+	TableRow,
+	TableCell
+  } from "@nextui-org/table";
 // * Import CSS file, you can use CSS module if you want
 // ! Change your CSS inside this file
 import './page.css'
 import Kols from './Utils/Kols';
+
 const build_URL = process.env.BUILD_URL;
 
 const Page = () => {
 	// * Use useState to store Kols from API 
 	// ! (if you have more optimized way to store data, PLEASE FEELS FREE TO CHANGE)
-	const [Kols, setKols] = useState<Kols[]>([]);
+	var [Kols, setKols] = useState<Kols[]>([]);
 
 	// * Fetch API over here 
 	// * Use useEffect to fetch data from API 
 	useEffect(() => {
 		const fetchKols = async () => {
 			try {
-				const response = await fetch(`${build_URL}/kol?pageIndex=1&pageSize=10`);
+				const response = await fetch(`${build_URL}/kols`);
 				const data = await response.json();
-		
-				const kols: Kols[] = data;
-		
-				setKols(kols);
+				setKols(data);
+	
 			} catch (error) {
 				console.log('Error fetching data: ', error);
 			}
@@ -74,25 +80,22 @@ const Page = () => {
 
 	return (
 		<>
-			<h1 className='header'>Implement component over here</h1>
-			<table>
-				<thead>
-					<tr>
-						{columns.map((column) => (
-							<th key={column.field}>{column.header}</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{Kols.map((kol) => (
-						<tr key={kol.KolID}>
-							{columns.map((column) => (
-								<td key={column.field}>{renderCellValue(kol[column.field as keyof Kols])}</td>
-							))}
-						</tr>
+			<Table aria-label='KOL Information'>
+				<TableHeader>
+					{columns.map((column) => (
+						<TableColumn key = {column.field}>{column.header}</TableColumn>
 					))}
-				</tbody>
-			</table>
+				</TableHeader>
+				<TableBody>
+					{Kols.map((kol) => (
+						<TableRow key = {kol.KolID}>
+							{columns.map((column) => (
+								<TableCell key = {column.field}>{renderCellValue(kol[column.field as keyof Kols])}</TableCell>
+							))}
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
 		</>
 	)
 };

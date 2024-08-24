@@ -1,3 +1,4 @@
+// file: Controllers/GetKolsController.go
 package Controllers
 
 import (
@@ -11,48 +12,50 @@ import (
 	"github.com/google/uuid"
 )
 
+// GetKolsController handles the HTTP request for retrieving KOLs with pagination.
 func GetKolsController(context *gin.Context) {
 	var KolsVM ViewModels.KolViewModel
 	var guid = uuid.New().String()
 
-	// * Get Kols from the database based on the range of pageIndex and pageSize
-	// * TODO: Implement the logic to get parameters from the request
-	// ? If parameter passed in the request is not valid, return the response with HTTP Status Bad Request (400)
-	// @params: pageIndex
-	// @params: pageSize
-	pageIndexStr := context.Query("pageIndex")
-	pageSizeStr := context.Query("pageSize")
+	// Extract pageIndex and pageSize from query parameters
+	pageIndexStr := context.DefaultQuery("pageIndex", "1")
+	pageSizeStr := context.DefaultQuery("pageSize", "10")
 
 	pageIndex, err := strconv.Atoi(pageIndexStr)
-	if err != nil || pageIndex <= 0 {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "HTTP Status Bad Request (400)"})
+	if err != nil || pageIndex < 1 {
+		KolsVM.Result = Const.UnSuccess
+		KolsVM.ErrorMessage = "Invalid pageIndex"
+		KolsVM.Guid = guid
+		context.JSON(http.StatusBadRequest, KolsVM)
 		return
 	}
 
 	pageSize, err := strconv.Atoi(pageSizeStr)
-	if err != nil || pageSize <= 0 {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "HTTP Status Bad Request (400)"})
+	if err != nil || pageSize < 1 {
+		KolsVM.Result = Const.UnSuccess
+		KolsVM.ErrorMessage = "Invalid pageSize"
+		KolsVM.Guid = guid
+		context.JSON(http.StatusBadRequest, KolsVM)
 		return
 	}
-	// * Perform Logic Here
-	// ! Pass the parameters to the Logic Layer
-	kols, error := Logic.GetKolLogic(pageIndex, pageSize)
-	if error != nil {
+
+	// Fetch KOLs from the logic layer
+	kols, err := Logic.GetKolLogic(pageIndex, pageSize)
+	if err != nil {
 		KolsVM.Result = Const.UnSuccess
-		KolsVM.ErrorMessage = error.Error()
-		KolsVM.PageIndex = int64(pageIndex) // * change this to the actual page index from the request
-		KolsVM.PageSize = int64(pageSize)   // * change this to the actual page size from the request
+		KolsVM.ErrorMessage = err.Error()
+		KolsVM.PageIndex = int64(pageIndex)
+		KolsVM.PageSize = int64(pageSize)
 		KolsVM.Guid = guid
 		context.JSON(http.StatusInternalServerError, KolsVM)
 		return
 	}
 
-	// * Return the response after the logic is executed
-	// ? If the logic is successful, return the response with HTTP Status OK (200)
+	// Prepare the successful response
 	KolsVM.Result = Const.Success
 	KolsVM.ErrorMessage = ""
-	KolsVM.PageIndex = int64(pageIndex) // * change this to the actual page index from the request
-	KolsVM.PageSize = int64(pageSize)   // * change this to the actual page size from the request
+	KolsVM.PageIndex = int64(pageIndex)
+	KolsVM.PageSize = int64(pageSize)
 	KolsVM.Guid = guid
 	KolsVM.KOL = kols
 	KolsVM.TotalCount = int64(len(kols))
